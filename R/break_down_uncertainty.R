@@ -1,7 +1,9 @@
 #' Explanation Level Uncertainty of Sequential Variable Attribution
 #'
-#' This function calculated uncertainty that comes from ordering in Sequential Variable Attribution methods.
-#' It runs `break_down` algorithm B times with random ordering of variables and then we calculate the uncertanity of attributions that comes from the ordering.
+#' The `break_down_uncertainty()` calles `B` times the break down algorithm for random orderings.
+#' Then it calculated distribution of attributions for these different orderings.
+#' Note that the `shap()` function is just a simplified interface to the `break_down_uncertainty()` function
+#' with by default `B=25` random draws.
 #'
 #' @param x a model to be explained, or an explainer created with function `DALEX::explain()`.
 #' @param data validation dataset, will be extracted from `x` if it is an explainer.
@@ -9,10 +11,11 @@
 #' @param new_observation a new observation with columns that correspond to variables used in the model.
 #' @param ... other parameters.
 #' @param B number of random paths
-#' @param path if specified, then this path will be highlighed on the plot
+#' @param path if specified, then this path will be highlighed on the plot. Use `average` in order to show an average effect
 #' @param label name of the model. By default it's extracted from the 'class' attribute of the model.
 #'
 #' @return an object of the `break_down_uncertainty` class.
+#' @importFrom utils head
 #'
 #' @seealso \code{\link{break_down}}, \code{\link{local_attributions}}
 #'
@@ -32,7 +35,7 @@
 #'                            y = titanic_small$survived == "yes")
 #'
 #' # there is no explanation level uncertanity linked with additive models
-#' bd_rf <- local_attributions_uncertainty(explain_titanic_glm, titanic_small[1, ])
+#' bd_rf <- break_down_uncertainty(explain_titanic_glm, titanic_small[1, ])
 #' bd_rf
 #' plot(bd_rf)
 #'
@@ -44,9 +47,9 @@
 #' new_observation <- HR_test[1,]
 #'
 #' explainer_rf <- explain(model,
-#'                         data = HR[1:1000,1:5])
+#'                         data = HR[1:1000, 1:5])
 #'
-#' bd_rf <- local_attributions_uncertainty(explainer_rf,
+#' bd_rf <- break_down_uncertainty(explainer_rf,
 #'                            new_observation)
 #' bd_rf
 #' plot(bd_rf)
@@ -55,21 +58,36 @@
 #' # here we do not have intreactions
 #' model <- randomForest(m2.price ~ . , data = apartments)
 #' explainer_rf <- explain(model,
-#'                         data = apartments_test[1:1000,2:6],
+#'                         data = apartments_test[1:1000, 2:6],
 #'                         y = apartments_test$m2.price[1:1000])
 #'
-#' bd_rf <- local_attributions_uncertainty(explainer_rf, apartments_test[1,])
+#' bd_rf <- break_down_uncertainty(explainer_rf, apartments_test[1,])
 #' bd_rf
 #' plot(bd_rf)
+#'
+#' bd_rf <- break_down_uncertainty(explainer_rf, apartments_test[1,], path = 1:5)
+#' plot(bd_rf)
+#'
+#' bd_rf <- break_down_uncertainty(explainer_rf,
+#'                                      apartments_test[1,],
+#'                                      path = c("floor", "no.rooms", "district",
+#'                                          "construction.year", "surface"))
+#' plot(bd_rf)
+#'
+#' bd_rf <- shap(explainer_rf,
+#'               apartments_test[1,])
+#' bd_rf
+#' plot(bd_rf)
+#' plot(bd_rf, show_boxplots = FALSE)
 #' }
 #' @export
-#' @rdname local_attributions_uncertainty
-local_attributions_uncertainty <- function(x, ..., B = 10)
-  UseMethod("local_attributions_uncertainty")
+#' @rdname break_down_uncertainty
+break_down_uncertainty <- function(x, ..., B = 10)
+  UseMethod("break_down_uncertainty")
 
 #' @export
-#' @rdname local_attributions_uncertainty
-local_attributions_uncertainty.explainer <- function(x, new_observation,
+#' @rdname break_down_uncertainty
+break_down_uncertainty.explainer <- function(x, new_observation,
                        ..., B = 10) {
   # extracts model, data and predict function from the explainer
   model <- x$model
@@ -77,15 +95,15 @@ local_attributions_uncertainty.explainer <- function(x, new_observation,
   predict_function <- x$predict_function
   label <- x$label
 
-  local_attributions_uncertainty.default(model, data, predict_function,
+  break_down_uncertainty.default(model, data, predict_function,
                      new_observation = new_observation,
                      label = label,
                      ..., B = B)
 }
 
 #' @export
-#' @rdname local_attributions_uncertainty
-local_attributions_uncertainty.default <- function(x, data, predict_function = predict,
+#' @rdname break_down_uncertainty
+break_down_uncertainty.default <- function(x, data, predict_function = predict,
                                new_observation,
                                label = class(x)[1],
                                ...,
@@ -112,9 +130,23 @@ local_attributions_uncertainty.default <- function(x, data, predict_function = p
   })
   # should we add a specific path?
   if (!is.null(path)) {
-    tmp <- get_single_random_path(x, data, predict_function, new_observation, label, path)
-    tmp$B <- 0
-    result <- c(result, list(tmp))
+    # average or selected path
+    if (head(path, 1) == "average") {
+      # let's calculate an average attribution
+      extracted_contributions <- sapply(result, function(chunk) {
+        chunk[order(chunk$variable), "contribution"]
+      })
+      result_average <- result[[1]]
+      result_average$contribution <- rowMeans(extracted_contributions)
+      result_average$variable <- result_average$variable[order(result_average$variable)]
+      result_average$B <- 0
+      result <- c(result, list(result_average))
+    } else {
+      # path is a selected ordering
+      tmp <- get_single_random_path(x, data, predict_function, new_observation, label, path)
+      tmp$B <- 0
+      result <- c(result, list(tmp))
+    }
   }
 
   result <- do.call(rbind, result)
@@ -125,7 +157,7 @@ local_attributions_uncertainty.default <- function(x, data, predict_function = p
 }
 
 get_single_random_path <- function(x, data, predict_function, new_observation, label, random_path) {
-  # if predict_function returns a single vector, convet it to a data frame
+  # if predict_function returns a single vector, conrvet it to a data frame
   if (length(unlist(predict_function(x, new_observation))) > 1) {
     predict_function_df <- predict_function
   } else {
@@ -157,3 +189,10 @@ get_single_random_path <- function(x, data, predict_function, new_observation, l
 
   do.call(rbind,single_cols)
 }
+
+#' @export
+#' @rdname break_down_uncertainty
+shap <- function(x, ..., B = 25) {
+  break_down_uncertainty(x, ..., B = B, path = "average")
+}
+

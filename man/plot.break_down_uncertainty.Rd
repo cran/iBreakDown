@@ -5,7 +5,8 @@
 \title{Plot Generic for Break Down Uncertainty Objects}
 \usage{
 \method{plot}{break_down_uncertainty}(x, ...,
-  vcolors = DALEX::theme_drwhy_colors_break_down())
+  vcolors = DALEX::theme_drwhy_colors_break_down(),
+  show_boxplots = TRUE)
 }
 \arguments{
 \item{x}{the model model of `break_down_uncertainty` class.}
@@ -13,6 +14,8 @@
 \item{...}{other parameters.}
 
 \item{vcolors}{named vector with colors.}
+
+\item{show_boxplots}{logical if `TRUE` (default) boxplot will be plotted to show uncertanity of attributions}
 }
 \value{
 a `ggplot2` object.
@@ -32,8 +35,7 @@ model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare,
 explain_titanic_glm <- explain(model_titanic_glm,
                            data = titanic_small[,-9],
                            y = titanic_small$survived == "yes")
-bd_rf <- local_attributions_uncertainty(explain_titanic_glm, titanic_small[1, ],
-                           path = c(3,2,1))
+bd_rf <- shap(explain_titanic_glm, titanic_small[1, ])
 bd_rf
 plot(bd_rf)
 
@@ -49,7 +51,7 @@ explainer_rf <- explain(model,
                         data = HR[1:1000,1:5],
                         y = HR$status[1:1000])
 
-bd_rf <- local_attributions_uncertainty(explainer_rf,
+bd_rf <- break_down_uncertainty(explainer_rf,
                            new_observation,
                            path = c(3,2,4,1,5))
 bd_rf
@@ -62,12 +64,18 @@ explainer_rf <- explain(model,
                         data = apartments_test[1:1000,2:6],
                         y = apartments_test$m2.price[1:1000])
 
-bd_rf <- local_attributions_uncertainty(explainer_rf,
+bd_rf <- break_down_uncertainty(explainer_rf,
                                      apartments_test[1,],
                                      path = c("floor", "no.rooms", "district",
                                          "construction.year", "surface"))
 bd_rf
 plot(bd_rf)
+
+bd_rf <- shap(explainer_rf,
+              apartments_test[1,])
+bd_rf
+plot(bd_rf)
+plot(bd_rf, show_boxplots = FALSE)
 }
 }
 \references{

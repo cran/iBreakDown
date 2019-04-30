@@ -50,8 +50,8 @@ plot(rf_la)
 plotD3(rf_la)
 
 ## ------------------------------------------------------------------------
-rf_la_un <- local_attributions_uncertainty(explain_titanic_rf, new_passanger,
-                         path = c("age", "class", "gender" , "fare", "embarked", "sibsp", "parch"))
+rf_la_un <- break_down_uncertainty(explain_titanic_rf, new_passanger,
+                         path = "average")
 plot(rf_la_un)
 
 ## ------------------------------------------------------------------------
