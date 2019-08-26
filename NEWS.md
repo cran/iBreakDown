@@ -1,8 +1,21 @@
+iBreakDown 0.9.9
+----------------------------------------------------------------
+* Description of break_down explainer added
+* Description of break_down_uncertainty explainer added
+* plotD3 for shap added
+* chose first row when passing more than one `new_observation`
+
+iBreakDown 0.9.8
+----------------------------------------------------------------
+* New version of D3 plots in `plotD3()`.
+* Updated color palettes consistent with changes in DALEX 0.4.4
+
 iBreakDown 0.9.6
 ----------------------------------------------------------------
 * Function `local_attributions_uncertainty()` now supports `path = "average"` argument and plots shapley values  ([#29](https://github.com/ModelOriented/iBreakDown/issues/29)). 
 * Function `local_attributions_uncertainty()` is renamed to  `break_down_uncertainty()`.
 * Function `shap()` is an alias for  `break_down_uncertainty()`.
+* binder is removed as it was not used.
 
 
 iBreakDown 0.9.5

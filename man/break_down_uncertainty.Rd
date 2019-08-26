@@ -7,21 +7,23 @@
 \alias{shap}
 \title{Explanation Level Uncertainty of Sequential Variable Attribution}
 \usage{
-break_down_uncertainty(x, ..., B = 10)
+break_down_uncertainty(x, ..., keep_distributions = TRUE, B = 10)
 
 \method{break_down_uncertainty}{explainer}(x, new_observation, ...,
-  B = 10)
+  keep_distributions = TRUE, B = 10)
 
 \method{break_down_uncertainty}{default}(x, data,
   predict_function = predict, new_observation, label = class(x)[1],
-  ..., path = NULL, B = 10)
+  ..., path = NULL, keep_distributions = TRUE, B = 10)
 
 shap(x, ..., B = 25)
 }
 \arguments{
-\item{x}{a model to be explained, or an explainer created with function `DALEX::explain()`.}
+\item{x}{an explainer created with function \code{\link[DALEX]{explain}} or a model.}
 
 \item{...}{other parameters.}
+
+\item{keep_distributions}{if TRUE then we will keep distribution for predicted values. It's needed by the describe function.}
 
 \item{B}{number of random paths}
 
@@ -39,10 +41,10 @@ shap(x, ..., B = 25)
 an object of the `break_down_uncertainty` class.
 }
 \description{
-The `break_down_uncertainty()` calles `B` times the break down algorithm for random orderings.
+Function `break_down_uncertainty()` calls `B` times the break down algorithm for random orderings.
 Then it calculated distribution of attributions for these different orderings.
 Note that the `shap()` function is just a simplified interface to the `break_down_uncertainty()` function
-with by default `B=25` random draws.
+with a default value set to `B=25`.
 }
 \examples{
 library("DALEX")

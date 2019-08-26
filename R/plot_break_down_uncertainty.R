@@ -1,6 +1,6 @@
 #' Plot Generic for Break Down Uncertainty Objects
 #'
-#' @param x the model model of `break_down_uncertainty` class.
+#' @param x an explanation created with \code{\link{break_down_uncertainty}}
 #' @param ... other parameters.
 #' @param show_boxplots logical if `TRUE` (default) boxplot will be plotted to show uncertanity of attributions
 #' @param vcolors named vector with colors.
@@ -66,7 +66,7 @@
 #' }
 #' @export
 plot.break_down_uncertainty <- function(x, ...,
-                  vcolors = DALEX::theme_drwhy_colors_break_down(),
+                  vcolors = DALEX::colors_breakdown_drwhy(),
                   show_boxplots = TRUE) {
 
   variable <- contribution <- NULL

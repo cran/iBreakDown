@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>Explanations in natural language</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Explanations in natural language</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>We adress the problem of insuficient interpretability of explanations for domain experts. We solve this issue by introducing <code>describe()</code> function, which automaticly generates natural language descriptions of explanations generated with <code>iBrakDown</code> package.</p>
+</div>
+<div id="ibreakdown-package" class="section level2">
+<h2>iBreakDown Package</h2>
+<p>The <code>iBreakDown</code> package allows for generating feature attribution explanations. Feature attribution explanations justify a model’s prediction by showing which of the model’s variables affect the prediction and to what extent. It is done by attaching to each variable an importance coefficient, which sum should approximate the model’s prediction.</p>
+<p>There are two methods used by <code>iBreakDown</code> package: <code>shap()</code> and <code>break_down()</code>.</p>
+<p>Function <code>shap()</code> generates a SHAP explanation, that is the function assigns Shapley values to each variable. Function <code>break_down</code> uses break_down algorithm to generate an efficient approximation of the Shapley values. We show how to generate both explanations on an easy example using titanic data set and explainers from <code>DALEX</code> package.</p>
+<p>First, we load the data set and build a random forest model classifying, which of the passangers survived sinking of the titanic. Then, using <code>DALEX</code> package, we generate an explainer of the model. Lastly we select a random passanger, which prediction’s should be explained.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(<span class="st">&quot;DALEX&quot;</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(<span class="st">&quot;iBreakDown&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(<span class="st">&quot;randomForest&quot;</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4">titanic &lt;-<span class="st"> </span><span class="kw">na.omit</span>(titanic)</a>
+<a class="sourceLine" id="cb1-5" title="5"></a>
+<a class="sourceLine" id="cb1-6" title="6">model_titanic_rf &lt;-<span class="st"> </span><span class="kw">randomForest</span>(survived <span class="op">==</span><span class="st"> &quot;yes&quot;</span> <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb1-7" title="7">                                 <span class="dt">data =</span> titanic </a>
+<a class="sourceLine" id="cb1-8" title="8">                                 )</a>
+<a class="sourceLine" id="cb1-9" title="9"></a>
+<a class="sourceLine" id="cb1-10" title="10">explain_titanic_rf &lt;-<span class="st"> </span><span class="kw">explain</span>(model_titanic_rf,</a>
+<a class="sourceLine" id="cb1-11" title="11">                            <span class="dt">data =</span> titanic[,<span class="op">-</span><span class="dv">9</span>],</a>
+<a class="sourceLine" id="cb1-12" title="12">                            <span class="dt">y =</span> titanic<span class="op">$</span>survived <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,</a>
+<a class="sourceLine" id="cb1-13" title="13">                            <span class="dt">label =</span> <span class="st">&quot;Random Forest&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Preparation of a new explainer is initiated
+#&gt;   -&gt; model label       :  Random Forest 
+#&gt;   -&gt; data              :  2099  rows  8  cols 
+#&gt;   -&gt; target variable   :  2099  values 
+#&gt;   -&gt; predict function  :  yhat.randomForest  will be used ([33mdefault[39m)
+#&gt;   -&gt; predicted values  :  numerical, min =  0.009175727 , mean =  0.3242145 , max =  0.9912957  
+#&gt;   -&gt; residual function :  difference between y and yhat ([33mdefault[39m)
+#&gt;   -&gt; residuals         :  numerical, min =  -0.811382 , mean =  0.0002257557 , max =  0.9066447  
+#&gt; [32mA new explainer has been created![39m</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">passanger &lt;-<span class="st"> </span>titanic[<span class="kw">sample</span>(<span class="kw">nrow</span>(titanic), <span class="dv">1</span>) ,<span class="op">-</span><span class="dv">9</span>]</a>
+<a class="sourceLine" id="cb3-2" title="2">passanger</a></code></pre></div>
+<pre><code>#&gt;     gender age class    embarked       country fare sibsp parch
+#&gt; 624   male  46   1st Southampton United States   26     0     0</code></pre>
+<p>Now we are ready for generating <code>shap()</code> and <code>iBreakDown()</code> explanations.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">bd_rf &lt;-<span class="st"> </span><span class="kw">break_down</span>(explain_titanic_rf,</a>
+<a class="sourceLine" id="cb5-2" title="2">                    passanger,</a>
+<a class="sourceLine" id="cb5-3" title="3">                    <span class="dt">keep_distributions =</span> <span class="ot">TRUE</span>) <span class="co"># distributions should be kept</span></a>
+<a class="sourceLine" id="cb5-4" title="4">shap_rf &lt;-<span class="st"> </span><span class="kw">shap</span>(explain_titanic_rf,</a>
+<a class="sourceLine" id="cb5-5" title="5">                passanger)</a>
+<a class="sourceLine" id="cb5-6" title="6"></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="kw">plot</span>(bd_rf)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">plot</span>(shap_rf)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="describing-an-explanation" class="section level2">
+<h2>Describing an explanation</h2>
+<p>The displayed explanations despite their visual clarity may not be interpretable for someone not familiar with iBreakDown or shap explanation. Therefore, we generate a simple natural language description for both explainers.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">describe</span>(bd_rf)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.009.</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">describe</span>(shap_rf)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.036.</code></pre>
+</div>
+<div id="parameters-of-describe-function" class="section level2">
+<h2>Parameters of describe() function</h2>
+<p>Natural language descriptions should be flexible enough to generate a description with a desired level of specificity and lenght. We describe the parameters used for describing both explanations. As both explanatios have the same parameters, we turn our attention to describe the iBreakDown explanation.</p>
+<div id="adjusting-nonsignificance-treshold" class="section level4">
+<h4>Adjusting nonsignificance treshold</h4>
+<p>The nonsignificance treshold controls which predictions are close to the average prediction. By setting a higher value, more predictions will be described as close to the average model prediction and more variables will be described as nonsignificant.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">describe</span>(bd_rf, <span class="dt">nonsignificance_treshold =</span> <span class="dv">1</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.009.</code></pre>
+</div>
+<div id="adjusting-label-of-the-explanation" class="section level4">
+<h4>Adjusting label of the explanation</h4>
+<p>Label of the prediction could be changed, to display more specific descriptions.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">describe</span>(bd_rf, </a>
+<a class="sourceLine" id="cb13-2" title="2">         <span class="dt">label =</span> <span class="st">&quot;the passanger survived with probability&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the passanger survived with probability 0.324 which is close to the average model prediction.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.009.</code></pre>
+</div>
+<div id="short-descriptions" class="section level4">
+<h4>Short descriptions</h4>
+<p>Generating short descriptions can be useful, as they can make nice plot subtitles.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">describe</span>(bd_rf, <span class="dt">short_description =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324.</code></pre>
+</div>
+<div id="displaying-values" class="section level4">
+<h4>Displaying values</h4>
+<p>Displaying variable values can easily make the description more informative.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">describe</span>(bd_rf, <span class="dt">display_values =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class (= 1st).
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.009.</code></pre>
+</div>
+<div id="displaying-numbers" class="section level4">
+<h4>Displaying numbers</h4>
+<p>Displaying numbers changes the whole argumentation style making the description longer.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">describe</span>(bd_rf, <span class="dt">display_numbers =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction 0.324.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable is class. It increases the prediction by 0.112.
+#&gt; The second most important variable is gender. It decreases the prediction by 0.095.
+#&gt; The third most important variable is age. It decreases the prediction by 0.026.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.009.</code></pre>
+</div>
+<div id="distribution-details" class="section level4">
+<h4>Distribution details</h4>
+<p>Describing distribution details is useful if we want to have a big picture about other instance’s behaviour.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">describe</span>(bd_rf, <span class="dt">display_distribution_details =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction.Model predictions range from 0.009 to 0.991. The distribution of Random Forest&#39;s predictions is right-skewed with average equal to 0.324 and median equal to 0.214. The standard deviation is 0.281. Model&#39;s prediction for the selected instance is in the third quartile.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.009.</code></pre>
+</div>
+<div id="shap" class="section level4">
+<h4>SHAP</h4>
+<p>Explanations generated by <code>shap()</code> functions have the same arguments expect from <code>display_shap</code> what add an addition information, wheter the calculated variable’s contributions have high or low variability.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1"><span class="kw">describe</span>(shap_rf, <span class="dt">display_shap =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the prediction for the selected instance is 0.324 which is close to the average model prediction.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable that increase the prediction is class.
+#&gt; The average contribution of all the above variables is significant.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.036.</code></pre>
+</div>
+<div id="combibning-all-the-parameters" class="section level4">
+<h4>Combibning all the parameters</h4>
+<p>Of course all the arguments can be set according to preferences allowing for flexible natural language descriptions.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw">describe</span>(shap_rf,</a>
+<a class="sourceLine" id="cb25-2" title="2">         <span class="dt">label =</span> <span class="st">&quot;the passanger survived with probability&quot;</span>,</a>
+<a class="sourceLine" id="cb25-3" title="3">         <span class="dt">display_values =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb25-4" title="4">         <span class="dt">display_numbers =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb25-5" title="5">         <span class="dt">display_shap =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>#&gt; Random Forest predicts, that the passanger survived with probability 0.324 which is close to the average model prediction 0.324.For the selected instance model&#39;s prediction is higher, than for 70% of all observations.
+#&gt; 
+#&gt; The most important variable is class (= 1st). It increases the prediction by 0.113.
+#&gt; The second most important variable is gender (= male). It decreases the prediction by 0.113.
+#&gt; The third most important variable is age (= 46). It decreases the prediction by 0.036.
+#&gt; The average contribution of all the above variables is significant.
+#&gt; 
+#&gt; Other variables are with less importance. The contribution of all other variables is 0.036.</code></pre>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

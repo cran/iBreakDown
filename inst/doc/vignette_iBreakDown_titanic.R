@@ -58,5 +58,5 @@ plot(rf_la_un)
 plotD3(rf_la, max_features = 3)
 
 ## ------------------------------------------------------------------------
-plotD3(rf_la, max_features = 3, min_max = c(0,1))
+plotD3(rf_la, max_features = 3, min_max = c(0,1), margin = 0)
 

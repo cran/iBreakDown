@@ -13,10 +13,10 @@ break_down(x, ..., interactions = FALSE)
 
 \method{break_down}{default}(x, data, predict_function = predict,
   new_observation, keep_distributions = FALSE, order = NULL,
-  label = class(x)[1], ..., interactions = interactions)
+  label = class(x)[1], ..., interactions = FALSE)
 }
 \arguments{
-\item{x}{a model to be explained, or an explainer created with function `DALEX::explain()`.}
+\item{x}{an explainer created with function \code{\link[DALEX]{explain}} or a model.}
 
 \item{...}{parameters passed to `local_*` functions.}
 

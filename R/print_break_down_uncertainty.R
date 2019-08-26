@@ -1,6 +1,6 @@
 #' Print Generic for Break Down Uncertainty Objects
 #'
-#' @param x object of `break_down_uncertainty` class.
+#' @param x an explanation created with \code{\link{break_down_uncertainty}}
 #' @param ... other parameters.
 #'
 #' @references Predictive Models: Visual Exploration, Explanation and Debugging \url{https://pbiecek.github.io/PM_VEE}
@@ -53,12 +53,12 @@
 print.break_down_uncertainty <- function(x, ...) {
 
   result <- data.frame(
-    min = tapply(x$contribution, paste(x$label, x$variable, sep = "-"), min, na.rm = TRUE),
-    q1 = tapply(x$contribution, paste(x$label, x$variable, sep = "-"), quantile, 0.25, na.rm = TRUE),
-    median = tapply(x$contribution, paste(x$label, x$variable, sep = "-"), median, na.rm = TRUE),
-    mean = tapply(x$contribution, paste(x$label, x$variable, sep = "-"), mean, na.rm = TRUE),
-    q3 = tapply(x$contribution, paste(x$label, x$variable, sep = "-"), quantile, 0.75, na.rm = TRUE),
-    max = tapply(x$contribution, paste(x$label, x$variable, sep = "-"), max, na.rm = TRUE)
+    min = tapply(x$contribution, paste(x$label, x$variable, sep = ": "), min, na.rm = TRUE),
+    q1 = tapply(x$contribution, paste(x$label, x$variable, sep = ": "), quantile, 0.25, na.rm = TRUE),
+    median = tapply(x$contribution, paste(x$label, x$variable, sep = ": "), median, na.rm = TRUE),
+    mean = tapply(x$contribution, paste(x$label, x$variable, sep = ": "), mean, na.rm = TRUE),
+    q3 = tapply(x$contribution, paste(x$label, x$variable, sep = ": "), quantile, 0.75, na.rm = TRUE),
+    max = tapply(x$contribution, paste(x$label, x$variable, sep = ": "), max, na.rm = TRUE)
   )
 
   print.data.frame(result)
