@@ -2,9 +2,8 @@
 #'
 #'
 #' @examples
-#'
-#'library("DALEX")
-#'library("iBreakDown")
+#' library("DALEX")
+#' library("iBreakDown")
 #' titanic <- na.omit(titanic)
 #' model_titanic_glm <- glm(titanic$survived == "yes" ~ age + gender + class + fare + sibsp,
 #'                          data = titanic[ ,-9], family = "binomial")
@@ -12,7 +11,7 @@
 #'                               data = titanic[,-9],
 #'                               y = titanic$survived == "yes",
 #'                               label = "glm")
-#' passanger <- titanic[sample(nrow(titanic), 1) ,-9]
+#' passanger <- titanic[1, -9]
 #' shap_glm <- shap(explain_titanic_glm, passanger)
 #' plot(shap_glm)
 #'
@@ -21,10 +20,8 @@
 #'          display_shap = TRUE,
 #'          display_numbers = TRUE)
 #'
-#'
 #' @importFrom graphics plot
 #' @importFrom stats quantile
-#'
 #'
 #' @export
 #' @rdname describe
@@ -75,12 +72,12 @@ convert_explanation.break_down_uncertainty <- function(x) {
   df <- rbind(df_intercept, df, df_prediction)
   position <- c(1:nrow(df))
   df['position'] <- position
-  df['cummulative'] <- cumsum(df$contribution)
+  df['cumulative'] <- cumsum(df$contribution)
   df_break_down <- data.frame(variable = df['variable'],
                               contribution = df['contribution'],
                               variable_name = df['variable_name'],
                               variable_value = df["variable_value"],
-                              cummulative = df['cummulative'],
+                              cumulative = df['cumulative'],
                               sign = df["sign"],
                               position = df["position"],
                               label = df["label"])

@@ -8,16 +8,29 @@
 \usage{
 describe(x, nonsignificance_treshold = 0.15, ...)
 
-\method{describe}{break_down}(x, nonsignificance_treshold = 0.15, ...,
-  label = NULL, short_description = FALSE, display_values = FALSE,
-  display_numbers = FALSE, display_distribution_details = FALSE,
-  display_shap = FALSE)
+\method{describe}{break_down}(
+  x,
+  nonsignificance_treshold = 0.15,
+  ...,
+  label = NULL,
+  short_description = FALSE,
+  display_values = FALSE,
+  display_numbers = FALSE,
+  display_distribution_details = FALSE,
+  display_shap = FALSE
+)
 
-\method{describe}{break_down_uncertainty}(x,
-  nonsignificance_treshold = 0.15, ..., label = NULL,
-  short_description = FALSE, display_values = FALSE,
-  display_numbers = FALSE, display_distribution_details = FALSE,
-  display_shap = FALSE)
+\method{describe}{break_down_uncertainty}(
+  x,
+  nonsignificance_treshold = 0.15,
+  ...,
+  label = NULL,
+  short_description = FALSE,
+  display_values = FALSE,
+  display_numbers = FALSE,
+  display_distribution_details = FALSE,
+  display_shap = FALSE
+)
 }
 \arguments{
 \item{x}{an explanation created with \code{\link{break_down}} or \code{\link{shap}}}
@@ -76,6 +89,7 @@ explain_titanic_rf <- explain(model_titanic_rf,
                               label = "Random Forest v7")
 
 bd_explanation <- break_down(explain_titanic_rf, titanic[1, ], keep_distributions = TRUE)
+plot(bd_explanation)
 
 description <- describe(bd_explanation,
                         label = "the passanger will survive with probability",
@@ -86,9 +100,6 @@ description <- describe(bd_explanation,
 
 description
 
-
-
-
 library("DALEX")
 library("iBreakDown")
 titanic <- na.omit(titanic)
@@ -98,7 +109,7 @@ explain_titanic_glm <- explain(model_titanic_glm,
                               data = titanic[,-9],
                               y = titanic$survived == "yes",
                               label = "glm")
-passanger <- titanic[sample(nrow(titanic), 1) ,-9]
+passanger <- titanic[1, -9]
 shap_glm <- shap(explain_titanic_glm, passanger)
 plot(shap_glm)
 
@@ -106,6 +117,5 @@ describe(shap_glm,
          label = "the selected passanger survives with probability",
          display_shap = TRUE,
          display_numbers = TRUE)
-
 
 }

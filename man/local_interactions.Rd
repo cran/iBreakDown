@@ -8,12 +8,19 @@
 \usage{
 local_interactions(x, ...)
 
-\method{local_interactions}{explainer}(x, new_observation,
-  keep_distributions = FALSE, ...)
+\method{local_interactions}{explainer}(x, new_observation, keep_distributions = FALSE, ...)
 
-\method{local_interactions}{default}(x, data, predict_function = predict,
-  new_observation, label = class(x)[1], keep_distributions = FALSE,
-  order = NULL, interaction_preference = 1, ...)
+\method{local_interactions}{default}(
+  x,
+  data,
+  predict_function = predict,
+  new_observation,
+  label = class(x)[1],
+  keep_distributions = FALSE,
+  order = NULL,
+  interaction_preference = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{an explainer created with function \code{\link[DALEX]{explain}} or a model.}
@@ -22,26 +29,26 @@ local_interactions(x, ...)
 
 \item{new_observation}{a new observation with columns that correspond to variables used in the model.}
 
-\item{keep_distributions}{if `TRUE`, then the distribution of partial predictions is stored in addition to the average.}
+\item{keep_distributions}{if \code{TRUE}, then the distribution of partial predictions is stored in addition to the average.}
 
-\item{data}{validation dataset, will be extracted from `x` if it's an explainer.}
+\item{data}{validation dataset, will be extracted from \code{x} if it's an explainer.}
 
-\item{predict_function}{predict function, will be extracted from `x` if it's an explainer.}
+\item{predict_function}{predict function, will be extracted from \code{x} if it's an explainer.}
 
 \item{label}{character - the name of the model. By default it's extracted from the 'class' attribute of the model.}
 
-\item{order}{if not `NULL`, then it will be a fixed order of variables. It can be a numeric vector or vector with names of variables/interactions.}
+\item{order}{if not \code{NULL}, then it will be a fixed order of variables. It can be a numeric vector or vector with names of variables/interactions.}
 
 \item{interaction_preference}{an integer specifying which interactions will be present in an explanation. The larger the integer, the more frequently interactions will be presented.}
 }
 \value{
-an object of the `break_down` class.
+an object of the \code{break_down} class.
 }
 \description{
 This function implements decomposition of model predictions with identification
 of interactions.
 The complexity of this function is O(2*p) for additive models and O(2*p^2) for interactions.
-This function works in a similar way to step-up and step-down greedy approximations in function `breakDown::break_down()`.
+This function works in a similar way to step-up and step-down greedy approximations in function \code{break_down()}.
 The main difference is that in the first step the order of variables and interactions is determined.
 And in the second step the impact is calculated.
 }
@@ -98,7 +105,7 @@ plot(bd_rf, plot_distributions = TRUE)
 }
 }
 \references{
-Predictive Models: Visual Exploration, Explanation and Debugging \url{https://pbiecek.github.io/PM_VEE}
+Explanatory Model Analysis. Explore, Explain and Examine Predictive Models. \url{https://pbiecek.github.io/ema}
 }
 \seealso{
 \code{\link{break_down}}, \code{\link{local_attributions}}

@@ -8,34 +8,41 @@
 \usage{
 break_down(x, ..., interactions = FALSE)
 
-\method{break_down}{explainer}(x, new_observation, ...,
-  interactions = FALSE)
+\method{break_down}{explainer}(x, new_observation, ..., interactions = FALSE)
 
-\method{break_down}{default}(x, data, predict_function = predict,
-  new_observation, keep_distributions = FALSE, order = NULL,
-  label = class(x)[1], ..., interactions = FALSE)
+\method{break_down}{default}(
+  x,
+  data,
+  predict_function = predict,
+  new_observation,
+  keep_distributions = FALSE,
+  order = NULL,
+  label = class(x)[1],
+  ...,
+  interactions = FALSE
+)
 }
 \arguments{
 \item{x}{an explainer created with function \code{\link[DALEX]{explain}} or a model.}
 
-\item{...}{parameters passed to `local_*` functions.}
+\item{...}{parameters passed to \code{local_*} functions.}
 
 \item{interactions}{shall interactions be included?}
 
 \item{new_observation}{a new observation with columns that correspond to variables used in the model.}
 
-\item{data}{validation dataset, will be extracted from `x` if it is an explainer.}
+\item{data}{validation dataset, will be extracted from \code{x} if it is an explainer.}
 
-\item{predict_function}{predict function, will be extracted from `x` if it's an explainer.}
+\item{predict_function}{predict function, will be extracted from \code{x} if it's an explainer.}
 
-\item{keep_distributions}{if `TRUE`, then distribution of partial predictions is stored and can be plotted with the generic `plot()`.}
+\item{keep_distributions}{if \code{TRUE}, then distribution of partial predictions is stored and can be plotted with the generic \code{plot()}.}
 
-\item{order}{if not `NULL`, then it will be a fixed order of variables. It can be a numeric vector or vector with names of variables.}
+\item{order}{if not \code{NULL}, then it will be a fixed order of variables. It can be a numeric vector or vector with names of variables.}
 
 \item{label}{name of the model. By default it is extracted from the 'class' attribute of the model.}
 }
 \value{
-an object of the `break_down` class.
+an object of the \code{break_down} class.
 }
 \description{
 This function finds Variable Attributions via Sequential Variable Conditioning.
@@ -78,7 +85,7 @@ plot(bd_rf)
 }
 }
 \references{
-Predictive Models: Visual Exploration, Explanation and Debugging \url{https://pbiecek.github.io/PM_VEE}
+Explanatory Model Analysis. Explore, Explain and Examine Predictive Models. \url{https://pbiecek.github.io/ema}
 }
 \seealso{
 \code{\link{local_attributions}}, \code{\link{local_interactions}}

@@ -8,12 +8,18 @@
 \usage{
 local_attributions(x, ...)
 
-\method{local_attributions}{explainer}(x, new_observation,
-  keep_distributions = FALSE, ...)
+\method{local_attributions}{explainer}(x, new_observation, keep_distributions = FALSE, ...)
 
-\method{local_attributions}{default}(x, data, predict_function = predict,
-  new_observation, label = class(x)[1], keep_distributions = FALSE,
-  order = NULL, ...)
+\method{local_attributions}{default}(
+  x,
+  data,
+  predict_function = predict,
+  new_observation,
+  label = class(x)[1],
+  keep_distributions = FALSE,
+  order = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{an explainer created with function \code{\link[DALEX]{explain}} or a model.}
@@ -22,18 +28,18 @@ local_attributions(x, ...)
 
 \item{new_observation}{a new observation with columns that correspond to variables used in the model.}
 
-\item{keep_distributions}{if `TRUE`, then distribution of partial predictions is stored and can be plotted with the generic `plot()`.}
+\item{keep_distributions}{if \code{TRUE}, then distribution of partial predictions is stored and can be plotted with the generic \code{plot()}.}
 
-\item{data}{validation dataset, will be extracted from `x` if it is an explainer.}
+\item{data}{validation dataset, will be extracted from \code{x} if it is an explainer.}
 
-\item{predict_function}{predict function, will be extracted from `x` if it is an explainer.}
+\item{predict_function}{predict function, will be extracted from \code{x} if it is an explainer.}
 
 \item{label}{name of the model. By default it's extracted from the 'class' attribute of the model.}
 
-\item{order}{if not `NULL`, then it will be a fixed order of variables. It can be a numeric vector or vector with names of variables.}
+\item{order}{if not \code{NULL}, then it will be a fixed order of variables. It can be a numeric vector or vector with names of variables.}
 }
 \value{
-an object of the `break_down` class.
+an object of the \code{break_down} class.
 }
 \description{
 This function finds Variable attributions via Sequential Variable Conditioning.
@@ -96,7 +102,7 @@ plot(bd_rf, plot_distributions = TRUE)
 }
 }
 \references{
-Predictive Models: Visual Exploration, Explanation and Debugging \url{https://pbiecek.github.io/PM_VEE}
+Explanatory Model Analysis. Explore, Explain and Examine Predictive Models. \url{https://pbiecek.github.io/ema}
 }
 \seealso{
 \code{\link{break_down}}, \code{\link{local_interactions}}
