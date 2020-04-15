@@ -1,4 +1,3 @@
-
 #' Model Agnostic Sequential Variable attributions
 #'
 #' This function finds Variable attributions via Sequential Variable Conditioning.
@@ -25,20 +24,19 @@
 #' @examples
 #' library("DALEX")
 #' library("iBreakDown")
-#' # Toy examples, because CRAN angels ask for them
-#' titanic <- na.omit(titanic)
 #' set.seed(1313)
-#' titanic_small <- titanic[sample(1:nrow(titanic), 500), c(1,2,6,9)]
-#' model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare,
-#'                        data = titanic, family = "binomial")
+#' model_titanic_glm <- glm(survived ~ gender + age + fare,
+#'                        data = titanic_imputed, family = "binomial")
 #' explain_titanic_glm <- explain(model_titanic_glm,
-#'                            data = titanic_small[,-9],
-#'                            y = titanic_small$survived == "yes")
-#' bd_rf <- local_attributions(explain_titanic_glm, titanic_small[1, ])
-#' bd_rf
-#' plot(bd_rf, max_features = 3)
+#'                            data = titanic_imputed,
+#'                            y = titanic_imputed$survived,
+#'                            label = "glm")
 #'
-#' \donttest{
+#' bd_glm <- local_attributions(explain_titanic_glm, titanic_imputed[1, ])
+#' bd_glm
+#' plot(bd_glm, max_features = 3)
+#'
+#' \dontrun{
 #' ## Not run:
 #' library("randomForest")
 #' set.seed(1313)
@@ -48,8 +46,7 @@
 #' new_observation <- HR_test[1,]
 #'
 #' explainer_rf <- explain(model,
-#'                         data = HR[1:1000,1:5],
-#'                         y = HR$status[1:1000])
+#'                         data = HR[1:1000,1:5])
 #'
 #' bd_rf <- local_attributions(explainer_rf,
 #'                            new_observation)
@@ -294,8 +291,6 @@ create_ordered_path_2d <- function(feature_path, order, average_yhats_names) {
       feature_path <- feature_path[order,]
     }
     if (is.character(order)) {
-      if (any(order %in% average_yhats_names))
-        rownames(feature_path) <- average_yhats_names
       feature_path <- feature_path[order,]
     }
   }

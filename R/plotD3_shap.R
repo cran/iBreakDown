@@ -1,7 +1,7 @@
 #' @title Plot Shap (Break Down Uncertainty) Objects in D3 with r2d3 package.
 #'
 #' @description
-#' Plots shapley values.
+#' Plots Shapley values.
 #'
 #' @param x an explanation created with \code{\link{shap}}
 #' @param ... other parameters.
@@ -27,22 +27,21 @@
 #' @examples
 #' library("DALEX")
 #' library("iBreakDown")
-#'
-#' titanic <- na.omit(titanic)
 #' set.seed(1313)
-#' titanic_small <- titanic[sample(1:nrow(titanic), 500),]
-#' model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare + class +
-#'                            embarked + country + sibsp + parch,
-#'                          data = titanic_small, family = "binomial")
+#' model_titanic_glm <- glm(survived ~ gender + age + fare,
+#'                        data = titanic_imputed, family = "binomial")
 #' explain_titanic_glm <- explain(model_titanic_glm,
-#'                                data = titanic_small[,-9],
-#'                                y = titanic_small$survived == "yes",
-#'                                label = "glm")
-#' s_glm <- shap(explain_titanic_glm, titanic_small[1, ])
+#'                            data = titanic_imputed,
+#'                            y = titanic_imputed$survived,
+#'                            label = "glm")
+#'
+#' s_glm <- shap(explain_titanic_glm, titanic_imputed[1, ])
 #' s_glm
 #' plotD3(s_glm)
 #'
-#' library(randomForest)
+#' \dontrun{
+#' ## Not run:
+#' library("randomForest")
 #'
 #' HR_small <- HR[2:500,]
 #' m_rf <- randomForest(status ~. , data = HR_small)
@@ -57,7 +56,7 @@
 #'              predict_function = p_fun)
 #'
 #' plotD3(s_rf, time = 500)
-#'
+#'}
 #' @export
 #' @rdname plotD3_shap
 plotD3.shap <- function(x, ...,

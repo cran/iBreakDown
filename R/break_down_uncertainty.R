@@ -25,22 +25,20 @@
 #' @examples
 #' library("DALEX")
 #' library("iBreakDown")
-#' # Toy examples, because CRAN angels ask for them
-#' titanic <- na.omit(titanic)
 #' set.seed(1313)
-#' titanic_small <- titanic[sample(1:nrow(titanic), 500), c(1,2,6,9)]
-#' model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare,
-#'                        data = titanic_small, family = "binomial")
+#' model_titanic_glm <- glm(survived ~ gender + age + fare,
+#'                        data = titanic_imputed, family = "binomial")
 #' explain_titanic_glm <- explain(model_titanic_glm,
-#'                            data = titanic_small[,-9],
-#'                            y = titanic_small$survived == "yes")
+#'                                data = titanic_imputed,
+#'                                y = titanic_imputed$survived,
+#'                            label = "glm")
 #'
 #' # there is no explanation level uncertanity linked with additive models
-#' bd_rf <- break_down_uncertainty(explain_titanic_glm, titanic_small[1, ])
-#' bd_rf
-#' plot(bd_rf)
+#' bd_glm <- break_down_uncertainty(explain_titanic_glm, titanic_imputed[1, ])
+#' bd_glm
+#' plot(bd_glm)
 #'
-#' \donttest{
+#' \dontrun{
 #' ## Not run:
 #' library("randomForest")
 #' set.seed(1313)
@@ -75,11 +73,25 @@
 #'                                          "construction.year", "surface"))
 #' plot(bd_rf)
 #'
-#' bd_rf <- shap(explainer_rf,
-#'               apartments_test[1,])
-#' bd_rf
-#' plot(bd_rf)
-#' plot(bd_rf, show_boxplots = FALSE)
+#' #xgboost example
+#' library("xgboost")
+#' model_matrix <- model.matrix(status == "fired" ~ . -1, HR)
+#' data <- xgb.DMatrix(model_matrix, label = HR$status == "fired")
+#'
+#' params <- list(max_depth = 2, eta = 1, silent = 1, nthread = 2,
+#'                objective = "binary:logistic", eval_metric = "auc")
+#'
+#' model_HR <- xgb.train(params, data, nrounds = 50)
+#'
+#' explainer_HR <- explain(model_HR,
+#'                         data = model_matrix,
+#'                         y = HR$status == "fired",
+#'                         verbose = FALSE)
+#'
+#' bd <- break_down(explainer_HR, model_matrix[1,,drop=FALSE])
+#' plot(bd)
+#' s <- shap(explainer_HR, model_matrix[1,,drop=FALSE])
+#' plot(s)
 #' }
 #' @export
 #' @rdname break_down_uncertainty
@@ -206,17 +218,18 @@ get_single_random_path <- function(x, data, predict_function, new_observation, l
 
   diffs <- apply(do.call(rbind, yhats), 2, diff)
 
-  new_observation <- sapply(new_observation, nice_format) # same as in BD
+  #76
+  new_observation_vec <- sapply(as.data.frame(new_observation), nice_format) # same as in BD
 
   single_cols <- lapply(1:ncol(diffs), function(col) {
 
     variable_names <- vnames[random_path]
     data.frame(
       variable = paste0(variable_names, " = ",
-                       sapply(new_observation[variable_names], as.character)),
+                       sapply(new_observation_vec[variable_names], as.character)),
       contribution = diffs[,col],
       variable_name = variable_names,
-      variable_value = sapply(new_observation[variable_names], as.character),
+      variable_value = sapply(new_observation_vec[variable_names], as.character),
       sign = sign(diffs[,col]),
       label = ifelse(ncol(diffs) == 1, label, paste(label,colnames(diffs)[col], sep = "."))
     )

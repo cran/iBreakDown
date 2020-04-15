@@ -52,20 +52,19 @@ or \code{\link{local_interactions}} for attributions with interactions.
 \examples{
 library("DALEX")
 library("iBreakDown")
-# Toy examples, because CRAN angels ask for them
-titanic <- na.omit(titanic)
 set.seed(1313)
-titanic_small <- titanic[sample(1:nrow(titanic), 500), c(1,2,6,9)]
-model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare,
-                       data = titanic_small, family = "binomial")
+model_titanic_glm <- glm(survived ~ gender + age + fare,
+                       data = titanic_imputed, family = "binomial")
 explain_titanic_glm <- explain(model_titanic_glm,
-                           data = titanic_small[,-9],
-                           y = titanic_small$survived == "yes")
-bd_rf <- break_down(explain_titanic_glm, titanic_small[1, ])
-bd_rf
-plot(bd_rf, max_features = 3)
+                           data = titanic_imputed,
+                           y = titanic_imputed$survived,
+                           label = "glm")
 
-\donttest{
+bd_glm <- break_down(explain_titanic_glm, titanic_imputed[1, ])
+bd_glm
+plot(bd_glm, max_features = 3)
+
+\dontrun{
 ## Not run:
 library("randomForest")
 set.seed(1313)
@@ -75,13 +74,33 @@ model <- randomForest(status ~ . , data = HR)
 new_observation <- HR_test[1,]
 
 explainer_rf <- explain(model,
-                        data = HR[1:1000,1:5],
-                        y = HR$status[1:1000])
+                        data = HR[1:1000,1:5])
 
 bd_rf <- break_down(explainer_rf,
                            new_observation)
-bd_rf
+head(bd_rf)
 plot(bd_rf)
+
+
+#xgboost example
+library("xgboost")
+model_matrix <- model.matrix(status == "fired" ~ . -1, HR)
+data <- xgb.DMatrix(model_matrix, label = HR$status == "fired")
+
+params <- list(max_depth = 2, eta = 1, silent = 1, nthread = 2,
+               objective = "binary:logistic", eval_metric = "auc")
+
+model_HR <- xgb.train(params, data, nrounds = 50)
+
+explainer_HR <- explain(model_HR,
+                        data = model_matrix,
+                        y = HR$status == "fired",
+                        verbose = FALSE)
+
+bd <- break_down(explainer_HR, model_matrix[1,,drop=FALSE])
+plot(bd)
+s <- shap(explainer_HR, model_matrix[1,,drop=FALSE])
+plot(s)
 }
 }
 \references{

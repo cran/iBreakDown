@@ -17,6 +17,9 @@
 #' @param plot_distributions if \code{TRUE} then distributions of conditional propotions will be plotted. This requires \code{keep_distributions=TRUE} in the
 #' \code{\link{break_down}}, \code{\link{local_attributions}}, or \code{\link{local_interactions}}.
 #' @param baseline if numeric then veritical line starts in \code{baseline}.
+#' @param title a character. Plot title. By default "Break Down profile".
+#' @param subtitle a character. Plot subtitle. By default \code{NULL} - then subtitle is set to "created for the XXX, YYY model",
+#' where XXX, YYY are labels of given explainers.
 #'
 #' @return a \code{ggplot2} object.
 #'
@@ -29,22 +32,21 @@
 #' @examples
 #' library("DALEX")
 #' library("iBreakDown")
-#' # Toy examples, because CRAN angels ask for them
-#' titanic <- na.omit(titanic)
 #' set.seed(1313)
-#' titanic_small <- titanic[sample(1:nrow(titanic), 500), c(1,2,6,9)]
-#' model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare,
-#'                        data = titanic_small, family = "binomial")
+#' model_titanic_glm <- glm(survived ~ gender + age + fare,
+#'                        data = titanic_imputed, family = "binomial")
 #' explain_titanic_glm <- explain(model_titanic_glm,
-#'                            data = titanic_small[,-9],
-#'                            y = titanic_small$survived == "yes")
-#' bd_rf <- break_down(explain_titanic_glm, titanic_small[1, ])
-#' bd_rf
-#' plot(bd_rf, max_features = 3)
-#' plot(bd_rf, max_features = 3,
+#'                            data = titanic_imputed,
+#'                            y = titanic_imputed$survived,
+#'                            label = "glm")
+#'
+#' bd_glm <- break_down(explain_titanic_glm, titanic_imputed[1, ])
+#' bd_glm
+#' plot(bd_glm, max_features = 3)
+#' plot(bd_glm, max_features = 3,
 #'      vnames = c("average","+ male","+ young","+ cheap ticket", "+ other factors", "final"))
 #'
-#' \donttest{
+#' \dontrun{
 #' ## Not run:
 #' library("randomForest")
 #' set.seed(1313)
@@ -54,8 +56,7 @@
 #' new_observation <- HR_test[1,]
 #'
 #' explainer_rf <- explain(model,
-#'                         data = HR[1:1000,1:5],
-#'                         y = HR$status[1:1000])
+#'                         data = HR[1:1000,1:5])
 #'
 #' bd_rf <- local_attributions(explainer_rf,
 #'                            new_observation)
@@ -113,8 +114,18 @@ plot.break_down <- function(x, ...,
                             digits = 3, rounding_function = round,
                             add_contributions = TRUE, shift_contributions = 0.05,
                             plot_distributions = FALSE,
-                            vnames = NULL) {
+                            vnames = NULL,
+                            title = "Break Down profile",
+                            subtitle = NULL) {
   position <- cumulative <- prev <- pretty_text <- right_side <- contribution <- NULL
+  # fix for https://github.com/ModelOriented/iBreakDown/issues/77
+  colnames(x) <- gsub(colnames(x), pattern = "cummulative", replacement = "cumulative")
+
+  # extract labels to use in the default subtitle
+  if (is.null(subtitle)) {
+    labels <- paste0(unique(x$`_label_`), collapse = ", ")
+    subtitle <- paste0("created for the ", labels, " model")
+  }
 
   if (plot_distributions) {
     df <- attr(x, "yhats_distribution")
@@ -154,7 +165,7 @@ plot.break_down <- function(x, ...,
     }
 
     # set limits for contributions
-    if (is.na(min_max)) {
+    if (any(is.na(min_max))) {
       x_limits <- scale_y_continuous(expand = c(0.05,0.15), name = "")
     } else {
       x_limits <- scale_y_continuous(expand = c(0.05,0.15), name = "", limits = min_max)
@@ -169,7 +180,8 @@ plot.break_down <- function(x, ...,
 
   # add theme
    pl + coord_flip() + theme_drwhy_vertical() +
-     theme(legend.position = "none")
+     theme(legend.position = "none") +
+     labs(title = title, subtitle = subtitle)
 }
 
 # break down plot with distributions

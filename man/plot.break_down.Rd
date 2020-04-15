@@ -16,7 +16,9 @@
   add_contributions = TRUE,
   shift_contributions = 0.05,
   plot_distributions = FALSE,
-  vnames = NULL
+  vnames = NULL,
+  title = "Break Down profile",
+  subtitle = NULL
 )
 }
 \arguments{
@@ -46,6 +48,11 @@ This should be \code{\link{signif}} which keeps a specified number of significan
 \code{\link{break_down}}, \code{\link{local_attributions}}, or \code{\link{local_interactions}}.}
 
 \item{vnames}{a character vector, if specified then will be used as labels on OY axis. By default NULL}
+
+\item{title}{a character. Plot title. By default "Break Down profile".}
+
+\item{subtitle}{a character. Plot subtitle. By default \code{NULL} - then subtitle is set to "created for the XXX, YYY model",
+where XXX, YYY are labels of given explainers.}
 }
 \value{
 a \code{ggplot2} object.
@@ -56,22 +63,21 @@ Displays a waterfall break down plot for objects of \code{break_down} class.
 \examples{
 library("DALEX")
 library("iBreakDown")
-# Toy examples, because CRAN angels ask for them
-titanic <- na.omit(titanic)
 set.seed(1313)
-titanic_small <- titanic[sample(1:nrow(titanic), 500), c(1,2,6,9)]
-model_titanic_glm <- glm(survived == "yes" ~ gender + age + fare,
-                       data = titanic_small, family = "binomial")
+model_titanic_glm <- glm(survived ~ gender + age + fare,
+                       data = titanic_imputed, family = "binomial")
 explain_titanic_glm <- explain(model_titanic_glm,
-                           data = titanic_small[,-9],
-                           y = titanic_small$survived == "yes")
-bd_rf <- break_down(explain_titanic_glm, titanic_small[1, ])
-bd_rf
-plot(bd_rf, max_features = 3)
-plot(bd_rf, max_features = 3,
+                           data = titanic_imputed,
+                           y = titanic_imputed$survived,
+                           label = "glm")
+
+bd_glm <- break_down(explain_titanic_glm, titanic_imputed[1, ])
+bd_glm
+plot(bd_glm, max_features = 3)
+plot(bd_glm, max_features = 3,
      vnames = c("average","+ male","+ young","+ cheap ticket", "+ other factors", "final"))
 
-\donttest{
+\dontrun{
 ## Not run:
 library("randomForest")
 set.seed(1313)
@@ -81,8 +87,7 @@ model <- randomForest(status ~ . , data = HR)
 new_observation <- HR_test[1,]
 
 explainer_rf <- explain(model,
-                        data = HR[1:1000,1:5],
-                        y = HR$status[1:1000])
+                        data = HR[1:1000,1:5])
 
 bd_rf <- local_attributions(explainer_rf,
                            new_observation)
