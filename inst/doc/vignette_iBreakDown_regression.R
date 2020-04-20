@@ -60,26 +60,6 @@ bd_svm <- local_attributions(m_svm,
 plot(bd_svm)
 
 ## -----------------------------------------------------------------------------
-library("xgboost")
-
-model_matrix <- model.matrix(life_length ~ . -1, dragons)
-data <- xgb.DMatrix(model_matrix, label = dragons$life_length)
-
-params <- list(max_depth = 2, eta = 1, silent = 1, nthread = 2, eval_metric = "rmse")
-
-m_xgboost <- xgb.train(params, data, nrounds = 50)
-
-test_matrix <- model.matrix(life_length ~ . -1, dragons_test)
-observation_matrix <- test_matrix[1,,drop=FALSE]
-
-bd_xgboost <- local_attributions(m_xgboost,
-                                 data = test_matrix,
-                                 new_observation =  observation_matrix)
-
-plot(bd_xgboost)
-plotD3(bd_xgboost)
-
-## -----------------------------------------------------------------------------
 library(nnet)
 
 x <- max(abs(dragons$life_length))
