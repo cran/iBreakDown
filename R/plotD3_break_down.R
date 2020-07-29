@@ -12,13 +12,14 @@
 #' @param rounding_function a function to be used for rounding numbers.
 #' This should be \code{\link{signif}} which keeps a specified number of significant digits or \code{\link{round}} (which is default) to have the same precision for all components.
 #' @param bar_width width of bars in px. By default it's 12px
-#' @param margin extend x axis domain range to adjust the plot. Usually value between 0.1 and 0.3, by default it's 0.2
+#' @param margin extend x axis domain range to adjust the plot. Usually value between 0.1 and 0.3, by default it's \code{0.2}
 #' @param scale_height if \code{TRUE}, the height of the plot scales with window size
 #' @param min_max a range of OX axis. By deafult \code{NA} therefore will be extracted from the contributions of \code{x}.
 #' But can be set to some constants, usefull if these plots are used for comparisons.
 #' @param vcolors If \code{NA} (default), DrWhy colors are used.
 #' @param chart_title a character. Set custom title
 #' @param time in ms. Set the animation length
+#' @param max_vars alias for the \code{max_features} parameter.
 #'
 #' @return a \code{r2d3} object.
 #'
@@ -75,9 +76,16 @@ plotD3.break_down <- function(x, ...,
                         min_max = NA,
                         vcolors = NA,
                         chart_title = NA,
-                        time = 0) {
+                        time = 0,
+                        max_vars = NULL) {
   # fix for https://github.com/ModelOriented/iBreakDown/issues/77
   colnames(x) <- gsub(colnames(x), pattern = "cummulative", replacement = "cumulative")
+
+  # aliases
+  if (!is.null(max_vars)) {
+    max_features <- max_vars
+  }
+
 
   n <- length(list(...)) + 1
   m <- c()

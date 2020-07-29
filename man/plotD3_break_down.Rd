@@ -20,7 +20,8 @@ plotD3(x, ...)
   min_max = NA,
   vcolors = NA,
   chart_title = NA,
-  time = 0
+  time = 0,
+  max_vars = NULL
 )
 }
 \arguments{
@@ -40,7 +41,7 @@ This should be \code{\link{signif}} which keeps a specified number of significan
 
 \item{bar_width}{width of bars in px. By default it's 12px}
 
-\item{margin}{extend x axis domain range to adjust the plot. Usually value between 0.1 and 0.3, by default it's 0.2}
+\item{margin}{extend x axis domain range to adjust the plot. Usually value between 0.1 and 0.3, by default it's \code{0.2}}
 
 \item{scale_height}{if \code{TRUE}, the height of the plot scales with window size}
 
@@ -52,6 +53,8 @@ But can be set to some constants, usefull if these plots are used for comparison
 \item{chart_title}{a character. Set custom title}
 
 \item{time}{in ms. Set the animation length}
+
+\item{max_vars}{alias for the \code{max_features} parameter.}
 }
 \value{
 a \code{r2d3} object.

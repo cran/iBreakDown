@@ -1,10 +1,16 @@
-iBreakDown 1.1.2
+iBreakDown 1.3.1
 ---------------------------------------------------------------
-* `DALEX` is moved to Suggests as in  [#84](https://github.com/ModelOriented/iBreakDown/issues/84)
+* fix issue with text coliding with rectangle [#85](https://github.com/ModelOriented/iBreakDown/issues/85)
 
-iBreakDown 1.1.2
+iBreakDown 1.2.1
+---------------------------------------------------------------
+* fix the intercept bar color when `baseline` is used (now it's blue)
+* add `max_vars` alias to the plots (unification)
+
+iBreakDown 1.2.0
 ---------------------------------------------------------------
 * fix `shap` sign column [#82](https://github.com/ModelOriented/iBreakDown/issues/82)
+* `DALEX` is moved to Suggests as in  [#84](https://github.com/ModelOriented/iBreakDown/issues/84)
 
 iBreakDown 1.1.1
 ---------------------------------------------------------------

@@ -17,9 +17,9 @@
 #' @param plot_distributions if \code{TRUE} then distributions of conditional propotions will be plotted. This requires \code{keep_distributions=TRUE} in the
 #' \code{\link{break_down}}, \code{\link{local_attributions}}, or \code{\link{local_interactions}}.
 #' @param baseline if numeric then veritical line starts in \code{baseline}.
-#' @param title a character. Plot title. By default "Break Down profile".
-#' @param subtitle a character. Plot subtitle. By default \code{NULL} - then subtitle is set to "created for the XXX, YYY model",
-#' where XXX, YYY are labels of given explainers.
+#' @param title a character. Plot title. By default \code{"Break Down profile"}.
+#' @param subtitle a character. Plot subtitle. By default \code{""}.
+#' @param max_vars alias for the \code{max_features} parameter.
 #'
 #' @return a \code{ggplot2} object.
 #'
@@ -27,6 +27,7 @@
 #' @importFrom utils tail
 #'
 #' @references Explanatory Model Analysis. Explore, Explain and Examine Predictive Models. \url{https://pbiecek.github.io/ema}
+#'
 #'
 #' @examples
 #' library("DALEX")
@@ -115,22 +116,23 @@ plot.break_down <- function(x, ...,
                             plot_distributions = FALSE,
                             vnames = NULL,
                             title = "Break Down profile",
-                            subtitle = NULL) {
+                            subtitle = "",
+                            max_vars = NULL) {
   position <- cumulative <- prev <- pretty_text <- right_side <- contribution <- NULL
   # fix for https://github.com/ModelOriented/iBreakDown/issues/77
   colnames(x) <- gsub(colnames(x), pattern = "cummulative", replacement = "cumulative")
 
-  # extract labels to use in the default subtitle
-  if (is.null(subtitle)) {
-    labels <- paste0(unique(x$`_label_`), collapse = ", ")
-    subtitle <- paste0("created for the ", labels, " model")
+  # aliases
+  if (!is.null(max_vars)) {
+    max_features <- max_vars
   }
 
   if (plot_distributions) {
+    vorder <- c(x$variable[order(x$position)], "all data")
     df <- attr(x, "yhats_distribution")
     if (is.null(df))
       stop("You need to use keep_distributions=TRUE in the break_down() ")
-    pl <- plot_break_down_distributions(df)
+    pl <- plot_break_down_distributions(df, vorder)
   } else {
     # how many features shall we plot
     x <- select_only_k_features(x, max_features)
@@ -139,13 +141,21 @@ plot.break_down <- function(x, ...,
     broken_baseline <- tmp$broken_baseline
     x <- tmp$x
 
+    # fix for https://github.com/ModelOriented/iBreakDown/issues/85
+    # check if correction is needed
+    if (any(x[x$variable == "prediction", "right_side"] < broken_baseline$contribution)) {
+      # put there max val
+      x[x$variable == "prediction", "right_side"] <- pmax(x[x$variable == "prediction", "right_side"], broken_baseline$contribution)
+    }
+
+
     # base plot
     pl <- ggplot(x, aes(x = position + 0.5,
-                                  y = pmax(cumulative, prev),
-                                  xmin = position + 0.15, xmax = position + 0.85,
-                                  ymin = cumulative, ymax = prev,
-                                  fill = sign,
-                                  label = pretty_text))
+                        y = pmax(cumulative, prev),
+                        xmin = position + 0.15, xmax = position + 0.85,
+                        ymin = cumulative, ymax = prev,
+                        fill = sign,
+                        label = pretty_text))
     # add rectangles and hline
     pl <- pl +
       geom_errorbarh(data = x[x$variable_name != "", ],
@@ -160,7 +170,11 @@ plot.break_down <- function(x, ...,
     # add addnotations
     if (add_contributions) {
       drange <- diff(range(x$cumulative))
-      pl <- pl + geom_text(aes(y = right_side), vjust = 0.5, nudge_y = drange*shift_contributions, hjust = 0, color = "#371ea3")
+      pl <- pl + geom_text(aes(y = right_side),
+                           vjust = 0.5,
+                           nudge_y = drange*shift_contributions,
+                           hjust = 0,
+                           color = "#371ea3")
     }
 
     # set limits for contributions
@@ -184,8 +198,12 @@ plot.break_down <- function(x, ...,
 }
 
 # break down plot with distributions
-plot_break_down_distributions <- function(df) {
+plot_break_down_distributions <- function(df, vorder = NULL) {
   variable  <- prediction <- id <- NULL
+  if (!is.null(vorder)) {
+    df$variable <- factor(df$variable, levels = unique(vorder))
+  }
+
   ggplot(df, aes(variable, prediction, group = factor(variable))) +
     geom_line(aes(group = id), alpha = 0.01) +
     geom_violin(scale = "width", adjust = 3) +
@@ -197,6 +215,7 @@ plot_break_down_distributions <- function(df) {
 # prepare data for plot
 prepare_data_for_break_down_plot <- function(x, baseline, rounding_function, digits) {
   x$sign[x$variable_name == ""] <- "X"
+  x$sign[x$variable == "intercept"] <- "X"
   x$prev <- x$cumulative - x$contribution
   broken_baseline <- x[x$variable_name == "intercept",]
   x$text <- x$prev
