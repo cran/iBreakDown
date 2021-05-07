@@ -26,8 +26,7 @@
 #' @import ggplot2
 #' @importFrom utils tail
 #'
-#' @references Explanatory Model Analysis. Explore, Explain and Examine Predictive Models. \url{https://pbiecek.github.io/ema}
-#'
+#' @references Explanatory Model Analysis. Explore, Explain and Examine Predictive Models. \url{https://ema.drwhy.ai}
 #'
 #' @examples
 #' library("DALEX")
@@ -128,7 +127,7 @@ plot.break_down <- function(x, ...,
   }
 
   if (plot_distributions) {
-    vorder <- c(x$variable[order(x$position)], "all data")
+    vorder <- c(as.character(x$variable)[order(x$position)], "all data")
     df <- attr(x, "yhats_distribution")
     if (is.null(df))
       stop("You need to use keep_distributions=TRUE in the break_down() ")
@@ -146,6 +145,10 @@ plot.break_down <- function(x, ...,
     if (any(x[x$variable == "prediction", "right_side"] < broken_baseline$contribution)) {
       # put there max val
       x[x$variable == "prediction", "right_side"] <- pmax(x[x$variable == "prediction", "right_side"], broken_baseline$contribution)
+    }
+    if (any(x[x$variable == "intercept", "right_side"] < broken_baseline$contribution)) {
+      # put there max val
+      x[x$variable == "intercept", "right_side"] <- pmax(x[x$variable == "intercept", "right_side"], broken_baseline$contribution)
     }
 
 
