@@ -1,3 +1,20 @@
+iBreakDown 2.1.2
+---------------------------------------------------------------
+* force matrix class for cumulative contributions in the calculate_contributions_along_path to prevent iBreakDown breaking for multiclass classification
+  models that return data.frame of probabilities instead of a matrix.
+
+iBreakDown 2.1.1
+---------------------------------------------------------------
+* consistent theme settings with [#541](https://github.com/ModelOriented/DALEX/issues/541)
+
+iBreakDown 2.1
+---------------------------------------------------------------
+*  ensure the path (variable sequence) within each B is unique (not oversampled) [#98](https://github.com/ModelOriented/iBreakDown/issues/98)
+
+iBreakDown 2.0.2
+---------------------------------------------------------------
+* fixed factor variabe values formatting when `new_observation` is of class `tbl` [#96](https://github.com/ModelOriented/iBreakDown/issues/96)
+
 iBreakDown 2.0.1
 ---------------------------------------------------------------
 * add `reload` argument to `plotD3`, which by default is `FALSE` (behavior unchanged); `TRUE` reloads the plot on resize [#89](https://github.com/ModelOriented/iBreakDown/issues/89)
